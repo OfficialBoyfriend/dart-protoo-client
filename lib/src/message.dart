@@ -1,22 +1,23 @@
 import 'dart:convert';
 
-import 'logger.dart';
-import 'utils.dart' as utils;
+import 'package:logging/logging.dart';
 
-final logger = new Logger('Message');
+import 'package:protoo_client/src/utils.dart' as utils;
+
+final logger = Logger('Message');
 
 class Message {
-  static JsonEncoder encoder = new JsonEncoder();
-  static JsonDecoder decoder = new JsonDecoder();
-  static Map<String, dynamic>? parse(dynamic raw) {
+  static JsonEncoder encoder = JsonEncoder();
+  static JsonDecoder decoder = JsonDecoder();
+
+  static Map<String, dynamic>? parse(String raw) {
     var object;
-    final message = Map<String, dynamic>();
+    final message = <String, dynamic>{};
 
     try {
       object = decoder.convert(raw);
     } catch (error) {
-      logger.error('parse() | invalid JSON: %s' + error.toString());
-
+      logger.severe('parse() | invalid JSON: $error');
       return null;
     }
 
@@ -25,11 +26,11 @@ class Message {
       message['request'] = true;
 
       if (!(object['method'] is String)) {
-        logger.failure('parse() | missing/invalid method field');
+        logger.severe('parse() | missing/invalid method field');
       }
 
       if (!(object['id'] is num)) {
-        logger.failure('parse() | missing/invalid id field');
+        logger.severe('parse() | missing/invalid id field');
       }
 
       message['id'] = object['id'];
@@ -40,7 +41,7 @@ class Message {
     else if (object['response'] != null) {
       message['response'] = true;
       if (!(object['id'] is num)) {
-        logger.failure('parse() | missing/invalid id field');
+        logger.severe('parse() | missing/invalid id field');
       }
 
       message['id'] = object['id'];
@@ -60,7 +61,7 @@ class Message {
     else if (object['notification'] != null) {
       message['notification'] = true;
       if (!(object['method'] is String)) {
-        logger.failure('parse() | missing/invalid method field');
+        logger.severe('parse() | missing/invalid method field');
       }
 
       message['method'] = object['method'];
@@ -68,7 +69,7 @@ class Message {
     }
     // Invalid.
     else {
-      logger.failure('parse() | missing request/response field');
+      logger.severe('parse() | missing request/response field');
       return null;
     }
 

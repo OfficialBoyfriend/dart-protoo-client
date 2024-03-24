@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:events2/events2.dart';
-
-import 'logger.dart';
+import 'package:logging/logging.dart';
 
 Logger _logger = Logger('EnhancedEventEmitter');
 
@@ -12,7 +11,7 @@ class EnhancedEventEmitter extends EventEmitter {
     try {
       emit(event, args);
     } catch (error) {
-      _logger.error(
+      _logger.severe(
         'safeEmit() event listener threw an error [event:$event]:$error',
       );
     }
@@ -23,7 +22,7 @@ class EnhancedEventEmitter extends EventEmitter {
     try {
       return emitAsFuture(event, args);
     } catch (error) {
-      _logger.error(
+      _logger.severe(
         'safeEmitAsFuture() event listener threw an error [event:$event]:$error',
       );
     }
